@@ -1,0 +1,18 @@
+services:
+  runner:
+    image: ghcr.io/actions/actions-runner:2.316.1
+    container_name: homelab-runner
+    restart: unless-stopped
+    volumes:
+      - /home/jaideepbir/actions-runner-docker:/home/runner
+    environment:
+      - RUNNER_URL=${RUNNER_URL}
+      - RUNNER_TOKEN=${RUNNER_TOKEN}
+      - RUNNER_NAME=${RUNNER_NAME:-pi5-docker}
+      - RUNNER_LABELS=${RUNNER_LABELS:-pi5,docker}
+    command: >
+      bash -lc "cd /home/runner;
+      if [ ! -f .runner ]; then
+        ./config.sh --url \"$$RUNNER_URL\" --token \"$$RUNNER_TOKEN\" --name \"$$RUNNER_NAME\" --labels \"$$RUNNER_LABELS\" --unattended;
+      fi;
+      ./run.sh"
