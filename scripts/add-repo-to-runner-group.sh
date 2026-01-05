@@ -10,8 +10,12 @@ if [[ -z "$repo" ]]; then
   exit 1
 fi
 
+if [[ "$repo" =~ ^https?://github.com/([^/]+/[^/]+)(/)?$ ]]; then
+  repo="${BASH_REMATCH[1]}"
+fi
+
 if [[ "$repo" != */* ]]; then
-  echo "Repo must be in owner/repo format."
+  echo "Repo must be in owner/repo format or a GitHub URL."
   exit 1
 fi
 
