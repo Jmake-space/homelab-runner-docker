@@ -25,6 +25,7 @@ docker compose up -d
 - Runner data is stored in `/home/jaideepbir/actions-runner-docker` on the host.
 - Labels default to `pi5,docker` (override via `.env`).
 - The runner is registered at the org level; add new public repos to the runner group if needed.
+- For Docker builds, mount `/var/run/docker.sock` or switch to a Docker-in-Docker runner image.
 
 ## Add a repo to the runner group
 ```bash
