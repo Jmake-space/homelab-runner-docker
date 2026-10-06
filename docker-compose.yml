@@ -1,6 +1,7 @@
 services:
   runner:
-    image: ghcr.io/actions/actions-runner:2.316.1
+    build: .
+    image: homelab-actions-runner:2.316.1-tzdata
     container_name: homelab-runner
     restart: unless-stopped
     volumes:
