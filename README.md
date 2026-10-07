@@ -22,6 +22,21 @@ docker compose up -d
 ```
 
 ## Notes
+- Compose selects a derived runner image whose Dockerfile installs Python 3 and
+  OS `tzdata`. This supplies IANA timezone data for Python `ZoneInfo`, including
+  `America/New_York`, without changing the runner's default timezone or user.
+- Validate source and timezone behavior with
+  `python3 -m unittest discover -s tests -v`. The image build also checks
+  `ZoneInfo("America/New_York")`. Runtime dependency repairs survive process
+  restarts but not container replacement; the derived image is the durable fix.
+- Publish changes via a PR to `main` from an authorized publication host.
+  `Runner Image Checks` builds the derived image and runs timezone tests inside
+  it on PRs and after merge. This validation workflow does not replace the live
+  container or publish the image to a registry.
+- Live replacement requires a separate GitHub Actions deployment workflow that
+  waits for idle capacity and retains the runner registration/work directory.
+  No such deploy workflow is configured yet. Do not replace a runner from its
+  own active job or rebuild it directly during dependency-only recovery.
 - Runner data is stored in `/home/jaideepbir/actions-runner-docker` on the host.
 - Labels default to `pi5,docker` (override via `.env`).
 - The runner is registered at the org level; add new public repos to the runner group if needed.

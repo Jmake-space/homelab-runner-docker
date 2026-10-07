@@ -1,0 +1,26 @@
+name: Runner Image Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  image-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate runner image source
+        run: python3 -m unittest discover -s tests -v
+      - name: Build durable timezone image
+        run: docker build --tag homelab-actions-runner:2.316.1-tzdata .
+      - name: Verify timezone behavior inside image
+        run: |
+          docker run --rm --entrypoint python3 \
+            --volume "$PWD:/workspace:ro" --workdir /workspace \
+            homelab-actions-runner:2.316.1-tzdata \
+            -m unittest discover -s tests -v
