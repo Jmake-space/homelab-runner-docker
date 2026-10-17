@@ -1,0 +1,27 @@
+name: ARC Runner Smoke
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  smoke:
+    runs-on: public-repos-scale-set
+    timeout-minutes: 3
+    steps:
+      - name: Verify runner and Docker daemon without deploying
+        shell: bash
+        env:
+          SMOKE_RUNNER_NAME: ${{ runner.name }}
+          SMOKE_RUNNER_OS: ${{ runner.os }}
+          SMOKE_RUNNER_ARCH: ${{ runner.arch }}
+        run: |
+          set -euo pipefail
+          printf 'Runner: %s OS: %s Architecture: %s\n' \
+            "$SMOKE_RUNNER_NAME" "$SMOKE_RUNNER_OS" "$SMOKE_RUNNER_ARCH"
+          [[ "$SMOKE_RUNNER_NAME" == public-repos-scale-set-* ]]
+          test "$SMOKE_RUNNER_OS" = Linux
+          test "$SMOKE_RUNNER_ARCH" = ARM64
+          docker version
+          docker info --format 'Server={{.ServerVersion}} Driver={{.Driver}}'
